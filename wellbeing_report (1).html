@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial Wellbeing Impact Report · WeWealth&co</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --white: #ffffff;
+    --off: #f8f7f5;
+    --ink: #1c1c28;
+    --ink-light: #6b6b7b;
+    --mist: #e8e6e1;
+    --blue: #7aaee8;
+    --blue-pale: #deeaf8;
+    --blue-light: #f0f5fd;
+    --teal: #6abaa8;
+    --teal-pale: #d0ebe6;
+    --teal-light: #f0f8f6;
+    --violet: #a888d8;
+    --violet-pale: #e4d8f8;
+    --violet-light: #f5f0fc;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--off);
+    color: var(--ink);
+    line-height: 1.6;
+  }
+
+  /* ─── COVER ─── */
+  .cover {
+    background: var(--white);
+    padding: 80px 64px 72px;
+    border-bottom: 1px solid var(--mist);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 48px;
+  }
+
+  .cover-eyebrow {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--teal);
+    font-weight: 500;
+    margin-bottom: 20px;
+  }
+
+  .cover h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(40px, 6vw, 72px);
+    font-weight: 700;
+    line-height: 1.05;
+    color: var(--ink);
+    margin-bottom: 20px;
+  }
+
+  .cover h1 em {
+    font-style: italic;
+    color: var(--teal);
+  }
+
+  .cover-sub {
+    font-size: 15px;
+    color: var(--ink-light);
+    max-width: 480px;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+
+  .cover-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    text-align: right;
+  }
+
+  .cover-stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 44px;
+    font-weight: 700;
+    line-height: 1;
+    display: block;
+  }
+
+  .cover-stat-label {
+    font-size: 11px;
+    color: var(--ink-light);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* ─── MAIN ─── */
+  main { max-width: 1100px; margin: 0 auto; padding: 80px 48px; }
+
+  .act-section { margin-bottom: 96px; }
+
+  /* ─── ACT HEADER ─── */
+  .act-header { margin-bottom: 48px; }
+
+  .act-tag-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .act-num-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--ink-light);
+    text-transform: uppercase;
+  }
+
+  .act-tag {
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 100px;
+  }
+
+  .act-tag.problem  { background: var(--blue-pale);   color: var(--blue); }
+  .act-tag.transform{ background: var(--teal-pale);   color: var(--teal); }
+  .act-tag.human    { background: var(--violet-pale); color: var(--violet); }
+
+  .act-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(30px, 4vw, 46px);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+
+  /* ─── CARDS ─── */
+  .card {
+    background: var(--white);
+    border-radius: 16px;
+    border: 1px solid var(--mist);
+    padding: 36px;
+    box-shadow: 0 2px 16px rgba(28,28,40,0.04);
+  }
+
+  .card-label {
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+
+  .card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 28px;
+    line-height: 1.3;
+  }
+
+  .chart-wrap {
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .legend {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--ink-light);
+  }
+
+  .legend-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .legend-pct {
+    margin-left: auto;
+    font-weight: 500;
+    color: var(--ink);
+    font-size: 13px;
+  }
+
+  /* ─── GRIDS ─── */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  /* ─── STRESS HEADLINE ─── */
+  .stress-headline {
+    background: var(--white);
+    border: 1px solid var(--mist);
+    border-radius: 16px;
+    padding: 44px 48px;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 16px rgba(28,28,40,0.04);
+  }
+
+  .stress-big-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 108px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--blue);
+    flex-shrink: 0;
+  }
+
+  .stress-headline-text h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+
+  .stress-headline-text p {
+    font-size: 15px;
+    color: var(--ink-light);
+    font-weight: 300;
+    max-width: 460px;
+    line-height: 1.65;
+  }
+
+  /* ─── PROFILE CARD ─── */
+  .profile-card {
+    background: var(--blue-light);
+    border: 1px solid var(--blue-pale);
+    border-radius: 16px;
+    padding: 36px;
+  }
+
+  .profile-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    line-height: 1.3;
+  }
+
+  .profile-items { display: flex; flex-direction: column; gap: 14px; }
+
+  .profile-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .profile-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--blue);
+    flex-shrink: 0;
+    margin-top: 7px;
+  }
+
+  /* ─── HERO STAT STRIP ─── */
+  .hero-strip {
+    background: var(--ink);
+    border-radius: 16px;
+    padding: 48px 40px;
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr 1px 1fr;
+    align-items: center;
+    margin-bottom: 32px;
+  }
+
+  .hero-stat { text-align: center; padding: 0 28px; }
+
+  .hero-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 68px;
+    font-weight: 700;
+    line-height: 1;
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .hero-desc {
+    font-size: 13px;
+    color: rgba(255,255,255,0.45);
+    font-weight: 300;
+    line-height: 1.55;
+  }
+
+  .hero-divider {
+    width: 1px;
+    height: 72px;
+    background: rgba(255,255,255,0.1);
+  }
+
+  /* ─── BEFORE / AFTER ─── */
+  .ba-wrap {
+    display: grid;
+    grid-template-columns: 1fr 56px 1fr;
+    align-items: stretch;
+    margin-bottom: 24px;
+  }
+
+  .ba-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: var(--mist);
+    font-weight: 300;
+  }
+
+  .ba-card {
+    border-radius: 16px;
+    padding: 32px;
+    border: 1px solid transparent;
+  }
+
+  .ba-card.before { background: var(--blue-light);  border-color: var(--blue-pale); }
+  .ba-card.after  { background: var(--teal-light);  border-color: var(--teal-pale); }
+
+  .ba-eyebrow {
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+
+  .ba-card.before .ba-eyebrow { color: var(--blue); }
+  .ba-card.after  .ba-eyebrow { color: var(--teal); }
+
+  .ba-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    line-height: 1.3;
+  }
+
+  /* ─── TESTIMONIALS ─── */
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .testimonial-card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 32px 28px 28px;
+    border: 1px solid var(--mist);
+    box-shadow: 0 2px 16px rgba(28,28,40,0.04);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .t-quote-mark {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 60px;
+    line-height: 0.7;
+    color: var(--violet-pale);
+    margin-bottom: 14px;
+    display: block;
+  }
+
+  .t-text {
+    font-size: 14px;
+    line-height: 1.75;
+    color: #444;
+    flex: 1;
+    margin-bottom: 20px;
+  }
+
+  .t-bottom { border-top: 1px solid var(--mist); padding-top: 16px; }
+
+  .t-author {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--violet);
+  }
+
+  .t-role {
+    font-size: 11px;
+    color: var(--ink-light);
+    margin-top: 3px;
+    font-weight: 300;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--white);
+    border-top: 1px solid var(--mist);
+    padding: 28px 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--ink-light);
+  }
+
+  .act-section.white-band {
+    background: transparent;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0;
+    margin-bottom: 96px;
+    border: none;
+  }
+
+  @media (max-width: 900px) {
+    .act-section.white-band { margin-left: 0; margin-right: 0; padding: 0; }
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    .cover { grid-template-columns: 1fr; padding: 48px 24px; }
+    .cover-stats { text-align: left; flex-direction: row; flex-wrap: wrap; gap: 20px; }
+    main { padding: 48px 24px; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .hero-strip { grid-template-columns: 1fr; gap: 32px; padding: 36px 24px; }
+    .hero-divider { display: none; }
+    .ba-wrap { grid-template-columns: 1fr; }
+    .ba-arrow { transform: rotate(90deg); padding: 8px 0; }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .stress-headline { flex-direction: column; gap: 16px; padding: 32px 24px; }
+    .stress-big-num { font-size: 72px; }
+    footer { flex-direction: column; gap: 8px; padding: 24px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ COVER ═══ -->
+<div class="cover">
+  <div>
+    <div class="cover-eyebrow">Impact Report 2025 · WeWealth&co</div>
+    <h1><strong>Financial Wellbeing</strong><br><em><strong>Before & After</strong></em></h1>
+    <p class="cover-sub">Măsurarea impactului programului de wellbeing financiar pentru angajații partenerilor noștri</p>
+  </div>
+  <div class="cover-stats">
+    <div>
+      <span class="cover-stat-num" style="color:var(--blue)">42</span>
+      <span class="cover-stat-label">angajați evaluați</span>
+    </div>
+    <div>
+      <span class="cover-stat-num" style="color:var(--teal)">34</span>
+      <span class="cover-stat-label">sesiuni 1:1</span>
+    </div>
+    <div>
+      <span class="cover-stat-num" style="color:var(--violet)">74%</span>
+      <span class="cover-stat-label">reducere stres</span>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <!-- ══════════════════════════════════
+       ACT 1 — PROBLEMA
+  ══════════════════════════════════ -->
+  <div class="act-section">
+    <div class="act-header">
+      <div class="act-tag-row">
+        <span class="act-num-label">01</span>
+        <span class="act-tag problem">Impactul înainte de wellbeing financiar</span>
+      </div>
+      <h2 class="act-title">Stresul financiar în echipa ta</h2>
+    </div>
+
+    <!-- Headline stat -->
+    <div class="stress-headline">
+      <div class="stress-big-num">74%</div>
+      <div class="stress-headline-text">
+        <h3>3 din 4 colegi erau stresați financiar</h3>
+        <p>Asta înseamnă că 3 din 4 oameni din echipă porneau ziua cu o grijă financiară nerezolvată. 64% simțeau acest stres frecvent sau constant, iar 55% raportau impact direct pe productivitate.</p>
+      </div>
+    </div>
+
+    <!-- 3 charts -->
+    <div class="grid-2" style="margin-bottom:24px">
+      <div class="card">
+        <div class="card-label" style="color:var(--blue)">Frecvența stresului financiar</div>
+        <div class="card-title">Cât de des simți stres<br>din cauza banilor?</div>
+        <div class="chart-wrap"><canvas id="stressChart"></canvas></div>
+        <div class="legend" id="stressLegend"></div>
+      </div>
+      <div class="card">
+        <div class="card-label" style="color:var(--blue)">Impactul la muncă</div>
+        <div class="card-title">Stresul financiar îți afectează<br>productivitatea?</div>
+        <div class="chart-wrap"><canvas id="prodChart"></canvas></div>
+        <div class="legend" id="prodLegend"></div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-label" style="color:var(--blue)">Claritatea planului financiar</div>
+        <div class="card-title">Cât de clar este planul<br>tău pentru viitor?</div>
+        <div class="chart-wrap"><canvas id="planChart"></canvas></div>
+        <div class="legend" id="planLegend"></div>
+      </div>
+      <div class="profile-card">
+        <div class="profile-title">Situația inițială în cifre</div>
+        <div class="profile-items">
+          <div class="profile-item"><div class="profile-dot"></div><span><strong>74%</strong> nu aveau niciun plan sau aveau unul neclar</span></div>
+          <div class="profile-item"><div class="profile-dot"></div><span><strong>64%</strong> simțeau stres financiar des sau foarte des</span></div>
+          <div class="profile-item"><div class="profile-dot"></div><span><strong>55%</strong> raportau impact moderat–ridicat pe productivitate</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       ACT 2 — TRANSFORMAREA
+  ══════════════════════════════════ -->
+  <div class="act-section">
+    <div class="act-header">
+      <div class="act-tag-row">
+        <span class="act-num-label">02</span>
+        <span class="act-tag transform">Impact după program</span>
+      </div>
+      <h2 class="act-title">Ce s-a schimbat după<br>o singură sesiune</h2>
+    </div>
+
+    <!-- Hero numbers -->
+    <div class="hero-strip">
+      <div class="hero-stat">
+        <span class="hero-num" style="color:var(--teal-pale)">74%</span>
+        <div class="hero-desc">au raportat reducere semnificativă sau totală a stresului financiar după sesiune</div>
+      </div>
+      <div class="hero-divider"></div>
+      <div class="hero-stat">
+        <span class="hero-num" style="color:#c8e8d8">+31%</span>
+        <div class="hero-desc">creștere în claritatea planului financiar față de starea inițială</div>
+      </div>
+      <div class="hero-divider"></div>
+      <div class="hero-stat">
+        <span class="hero-num" style="color:#e8d8c8">100%</span>
+        <div class="hero-desc">consideră că beneficiul este valoros și relevant pentru bunăstarea lor</div>
+      </div>
+    </div>
+
+    <!-- Before / After — Stres -->
+    <div class="ba-wrap">
+      <div class="ba-card before">
+        <div class="ba-eyebrow">Înainte</div>
+        <div class="ba-title">Stres financiar frecvent sau constant</div>
+        <div class="chart-wrap"><canvas id="stressBefore2"></canvas></div>
+        <div class="legend" id="stressBefore2Legend"></div>
+      </div>
+      <div class="ba-arrow">→</div>
+      <div class="ba-card after">
+        <div class="ba-eyebrow">După</div>
+        <div class="ba-title">Sesiunea a redus stresul financiar?</div>
+        <div class="chart-wrap"><canvas id="stressAfter2"></canvas></div>
+        <div class="legend" id="stressAfter2Legend"></div>
+      </div>
+    </div>
+
+    <!-- Before / After — Plan -->
+    <div class="ba-wrap">
+      <div class="ba-card before">
+        <div class="ba-eyebrow">Înainte</div>
+        <div class="ba-title">Claritatea planului financiar</div>
+        <div class="chart-wrap"><canvas id="planBefore2"></canvas></div>
+        <div class="legend" id="planBefore2Legend"></div>
+      </div>
+      <div class="ba-arrow">→</div>
+      <div class="ba-card after">
+        <div class="ba-eyebrow">După · ce au plecat cu ele acasă</div>
+        <div class="ba-title">Acțiuni concrete după sesiune</div>
+        <div class="chart-wrap"><canvas id="outcomesChart"></canvas></div>
+        <div class="legend" id="outcomesLegend"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       ACT 3 — DOVADA UMANĂ
+  ══════════════════════════════════ -->
+  <div class="act-section">
+    <div class="act-header">
+      <div class="act-tag-row">
+        <span class="act-num-label">03</span>
+        <span class="act-tag human">Dovada umană</span>
+      </div>
+      <h2 class="act-title">Ce spun colegii</h2>
+    </div>
+
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <span class="t-quote-mark">"</span>
+        <p class="t-text">A fost cel mai util exercițiu financiar pe care l-am făcut de foarte multă vreme. Nu m-am simțit nicio clipă judecat că sunt un slab administrator al fondurilor mele. Am putut să creionăm împreună planul clar pentru a putea atinge obiectivele mele dorite.</p>
+        <div class="t-bottom">
+          <div class="t-author">Marius P.</div>
+          <div class="t-role">Lead QA Engineer · Regista/Zitec</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <span class="t-quote-mark">"</span>
+        <p class="t-text">Faptul că Zitec investește în noi pentru a ne învăța cum să câștigăm mai mult și cum să economisim mai mult sunt convinsă că se va întoarce înzecit în succesul financiar al Zitec pe termen lung. Apreciem maxim acest beneficiu!</p>
+        <div class="t-bottom">
+          <div class="t-author">Mihaela F.</div>
+          <div class="t-role">Zitec</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <span class="t-quote-mark">"</span>
+        <p class="t-text">Am un background fără prea multă educație financiară și, sincer, nu știam de unde să încep. Sesiunile de consultanță financiară sunt foarte practice și mă ajută foarte mult, cu pași mici.</p>
+        <div class="t-bottom">
+          <div class="t-author">Ana I.</div>
+          <div class="t-role">Digital Products Analyst · Zitec</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <span>Produs de <strong>WeWealth&co</strong> · Raport confidențial</span>
+  <span>Date colectate 2025 · 42 participanți · Zitec</span>
+</footer>
+
+<script>
+  const blue   = ['#7aaee8','#a0c4f0','#c4dcf8','#e4f0fc'];
+  const teal   = ['#6abaa8','#8ed0be','#b0e0d4','#d8f2ee'];
+
+  function makeLegend(id, labels, data, colors) {
+    const total = data.reduce((a,b)=>a+b,0);
+    document.getElementById(id).innerHTML = labels.map((l,i) => `
+      <div class="legend-item">
+        <div class="legend-dot" style="background:${colors[i]}"></div>
+        <span>${l}</span>
+        <span class="legend-pct">${Math.round(data[i]/total*100)}%</span>
+      </div>`).join('');
+  }
+
+  function donut(id, labels, data, colors) {
+    new Chart(document.getElementById(id), {
+      type: 'doughnut',
+      data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 0, hoverOffset: 6 }] },
+      options: {
+        cutout: '68%',
+        layout: { padding: 4 },
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw} persoane` } }
+        }
+      }
+    });
+  }
+
+  // ACT 1
+  donut('stressChart', ['Des','Uneori','Rareori','Foarte des'], [18,17,6,1], blue);
+  makeLegend('stressLegend', ['Des','Uneori','Rareori','Foarte des'], [18,17,6,1], blue);
+
+  donut('prodChart', ['Puțin','Moderat','Mult','Deloc','Foarte mult'], [14,14,8,5,1], blue);
+  makeLegend('prodLegend', ['Puțin','Moderat','Mult','Deloc','Foarte mult'], [14,14,8,5,1], blue);
+
+  donut('planChart', ['Neclar','Niciun plan','Destul de clar','Foarte clar'], [19,12,9,2], blue);
+  makeLegend('planLegend', ['Neclar','Niciun plan','Destul de clar','Foarte clar'], [19,12,9,2], blue);
+
+  // ACT 2 — before (blue) / after (teal)
+  donut('stressBefore2', ['Des','Uneori','Rareori','Foarte des'], [18,17,6,1], blue);
+  makeLegend('stressBefore2Legend', ['Des','Uneori','Rareori','Foarte des'], [18,17,6,1], blue);
+
+  donut('stressAfter2', ['Mult','Foarte mult','Moderat','Puțin'], [17,9,8,1], teal);
+  makeLegend('stressAfter2Legend', ['Mult','Foarte mult','Moderat','Puțin'], [17,9,8,1], teal);
+
+  donut('planBefore2', ['Neclar','Niciun plan','Destul de clar','Foarte clar'], [19,12,9,2], blue);
+  makeLegend('planBefore2Legend', ['Neclar','Niciun plan','Destul de clar','Foarte clar'], [19,12,9,2], blue);
+
+  donut('outcomesChart', ['Obiective clarificate','Plan de acțiune concret','Validare strategie','Reducere anxietate'], [35,28,22,15], teal);
+  makeLegend('outcomesLegend', ['Obiective clarificate','Plan de acțiune concret','Validare strategie','Reducere anxietate'], [35,28,22,15], teal);
+</script>
+
+</body>
+</html>
